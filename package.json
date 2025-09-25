@@ -1,0 +1,33 @@
+{
+  "name": "yt-transcript",
+  "version": "1.0.0",
+  "description": "A Node.js application to fetch YouTube video transcripts using Oxylabs API",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "cli": "node src/index.js",
+    "dev": "nodemon server.js",
+    "dev:cli": "nodemon src/index.js",
+    "test-api": "node -e \"import('./src/YouTubeTranscriptFetcher.js').then(m => { const f = new m.default(process.env.OXYLABS_USERNAME, process.env.OXYLABS_PASSWORD); return f.getTranscriptText('J1jm4MoZw5Y', 'en', 'auto_generated'); }).then(t => console.log('✅ API Test Passed. Transcript length:', t.length)).catch(console.error)\"",
+    "test": "npm run test-api"
+  },
+  "keywords": [
+    "youtube",
+    "transcript",
+    "oxylabs",
+    "api",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
