@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
+    "build": "echo 'No build step required for Vercel'",
     "cli": "node src/index.js",
     "dev": "nodemon server.js",
     "dev:cli": "nodemon src/index.js",

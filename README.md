@@ -1,6 +1,16 @@
-# YouTube Transcript Fetcher
+# 🎥 YouTube Transcript Fetcher
 
-A Node.js application that fetches YouTube video transcripts using the Oxylabs Web Scraper API. This tool allows you to extract both uploader-provided and auto-generated transcripts from YouTube videos in multiple languages.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.18+-blue.svg)](https://expressjs.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.0+-06B6D4.svg)](https://tailwindcss.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
+
+A modern, full-featured Node.js application that fetches YouTube video transcripts using the Oxylabs Web Scraper API. Features a beautiful web interface, CLI tool, and comprehensive API for extracting both uploader-provided and auto-generated transcripts from YouTube videos in 10+ languages.
+
+## ✨ Live Demo
+
+🌐 **[Try it online](https://github.com/vashishthakapoor/youtube-transcript-extractor)** | 📚 **[API Documentation](http://localhost:3000/docs)** | 🐳 **[Docker Hub](#)**
 
 ## Features
 
@@ -249,6 +259,18 @@ For application issues, please create an issue in this repository.
 This application is for educational and legitimate research purposes. Always respect YouTube's Terms of Service and the content creators' rights. Ensure you have proper authorization before extracting content from videos.
 
 ## Deployment
+
+### Vercel Deployment (Recommended)
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vashishthakapoor/youtube-transcript-extractor)
+
+Or follow the [Vercel Deployment Guide](VERCEL_DEPLOYMENT.md) for detailed instructions.
+
+**Required Environment Variables for Vercel:**
+- `OXYLABS_USERNAME`: Your Oxylabs username
+- `OXYLABS_PASSWORD`: Your Oxylabs password
 
 ### Docker Deployment
 
