@@ -1,11 +1,6 @@
 {
   "version": 2,
   "name": "youtube-transcript-extractor",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "builds": [
     {
       "src": "public/**/*",
