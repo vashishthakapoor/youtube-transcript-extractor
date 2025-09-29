@@ -9,6 +9,7 @@ export default async function handler(req, res) {
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     );
+    res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -16,12 +17,19 @@ export default async function handler(req, res) {
     }
 
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return res.status(405).json({ 
+            error: 'Method not allowed. Use POST.',
+            method: req.method 
+        });
     }
 
     try {
         // Check if credentials are configured
         if (!process.env.OXYLABS_USERNAME || !process.env.OXYLABS_PASSWORD) {
+            console.error('Missing credentials:', {
+                hasUsername: !!process.env.OXYLABS_USERNAME,
+                hasPassword: !!process.env.OXYLABS_PASSWORD
+            });
             return res.status(500).json({
                 error: 'Oxylabs credentials not configured. Please set OXYLABS_USERNAME and OXYLABS_PASSWORD environment variables.'
             });
@@ -38,7 +46,7 @@ export default async function handler(req, res) {
         // Validate video ID format
         if (!/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
             return res.status(400).json({
-                error: 'Invalid video ID format'
+                error: 'Invalid video ID format. Must be 11 characters.'
             });
         }
 
@@ -71,11 +79,13 @@ export default async function handler(req, res) {
                 characters: transcript.length,
                 duration: parseInt(duration)
             },
-            deployment: 'vercel'
+            deployment: 'vercel',
+            timestamp: new Date().toISOString()
         });
 
     } catch (error) {
         console.error('Transcript fetch error:', error.message);
+        console.error('Error stack:', error.stack);
         
         let statusCode = 500;
         let errorMessage = error.message;
@@ -97,7 +107,8 @@ export default async function handler(req, res) {
 
         res.status(statusCode).json({
             error: errorMessage,
-            videoId: req.body?.videoId || 'unknown'
+            videoId: req.body?.videoId || 'unknown',
+            timestamp: new Date().toISOString()
         });
     }
 }

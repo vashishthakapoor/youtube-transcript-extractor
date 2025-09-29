@@ -395,7 +395,7 @@
                 currentVideoId = extractVideoId(videoUrl);
                 setLoading(true);
 
-                // Call the backend API
+                // Call the backend API with better error handling
                 const response = await fetch('/api/transcript', {
                     method: 'POST',
                     headers: {
@@ -408,9 +408,36 @@
                     })
                 });
 
+                // Check if response is OK
+                if (!response.ok) {
+                    // Try to parse error message
+                    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorMessage;
+                    } catch (parseError) {
+                        // If we can't parse JSON, it might be HTML (404 page)
+                        const textResponse = await response.text();
+                        if (textResponse.includes('<!DOCTYPE html>') || textResponse.includes('<html>')) {
+                            errorMessage = 'API endpoint not found. The server may not be properly configured.';
+                        } else {
+                            errorMessage = textResponse.substring(0, 100) + '...';
+                        }
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                // Check content type
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    const textResponse = await response.text();
+                    console.error('Non-JSON response:', textResponse.substring(0, 200));
+                    throw new Error('Server returned non-JSON response. Check server configuration.');
+                }
+
                 const data = await response.json();
 
-                if (!response.ok) {
+                if (!data.success) {
                     throw new Error(data.error || 'Failed to fetch transcript');
                 }
 
@@ -418,6 +445,10 @@
                 
                 // Update UI
                 videoInfo.textContent = `Video ID: ${currentVideoId} | Language: ${language} | Type: ${origin}`;
+                if (data.stats) {
+                    transcriptStats.textContent = `${data.stats.segments} segments | ${data.stats.words} words | ${Math.floor(data.stats.duration / 60)}:${(data.stats.duration % 60).toString().padStart(2, '0')} duration`;
+                }
+                
                 displayTranscript(currentTranscript);
                 
                 showElement(results);
@@ -428,6 +459,7 @@
 
             } catch (err) {
                 setLoading(false);
+                console.error('Fetch error:', err);
                 showError(err.message);
             }
         });
@@ -443,15 +475,28 @@
         async function checkAPIStatus() {
             try {
                 const response = await fetch('/api/health');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('API returned non-JSON response');
+                }
+                
                 const data = await response.json();
                 
                 if (data.status === 'ok' && data.hasCredentials) {
                     console.log('✅ API is ready');
+                } else if (data.status === 'ok' && !data.hasCredentials) {
+                    showError('Oxylabs credentials not configured on the server. Please contact the administrator.');
                 } else {
-                    showError('Oxylabs credentials not configured. Please check your .env file.');
+                    showError('API health check failed');
                 }
             } catch (error) {
-                showError('Cannot connect to API server. Please make sure the server is running.');
+                console.error('API status check failed:', error);
+                showError(`Cannot connect to API server: ${error.message}. Please make sure the server is running.`);
             }
         }
 

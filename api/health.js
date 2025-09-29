@@ -7,6 +7,7 @@ export default function handler(req, res) {
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     );
+    res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
         res.status(200).end();
@@ -17,12 +18,21 @@ export default function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const hasCredentials = !!(process.env.OXYLABS_USERNAME && process.env.OXYLABS_PASSWORD);
-    
-    res.status(200).json({ 
-        status: 'ok', 
-        hasCredentials,
-        timestamp: new Date().toISOString(),
-        deployment: 'vercel'
-    });
+    try {
+        const hasCredentials = !!(process.env.OXYLABS_USERNAME && process.env.OXYLABS_PASSWORD);
+        
+        res.status(200).json({ 
+            status: 'ok', 
+            hasCredentials,
+            timestamp: new Date().toISOString(),
+            deployment: 'vercel',
+            environment: process.env.NODE_ENV || 'development'
+        });
+    } catch (error) {
+        console.error('Health check error:', error);
+        res.status(500).json({
+            status: 'error',
+            error: error.message
+        });
+    }
 }
