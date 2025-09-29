@@ -1,16 +1,4 @@
 {
-  "version": 2,
-  "name": "youtube-transcript-extractor",
-  "builds": [
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
   "rewrites": [
     {
       "source": "/docs",
