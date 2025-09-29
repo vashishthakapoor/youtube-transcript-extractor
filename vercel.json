@@ -26,6 +26,10 @@
       "dest": "/api/transcript.js"
     },
     {
+      "src": "/api/debug",
+      "dest": "/api/debug.js"
+    },
+    {
       "src": "/docs",
       "dest": "/public/api-docs.html"
     },
